@@ -52,7 +52,7 @@ For database, this project is using PostgreSQL as main database repository (you 
 
 **Class Diagram:**
 
-![App Database SQL Table](/docs/db-table.png?raw=true "DB Tables")
+![App Database SQL Table](/docs/db-tables.png?raw=true "DB Tables")
 
   
 
