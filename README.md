@@ -9,8 +9,9 @@ This bot is made to organizing any events (offline, online, and etc.) and remind
 ## Features
 
 - Show All Events (Ongoing, Upcoming, Past)
-- Add New Event
+- Create Event
 - Join Event
+- Cancel Event
 - Add Participant to an Event
 - Event Schedule Reminder
 
@@ -52,5 +53,30 @@ For database, this project is using PostgreSQL as main database repository (you 
 **Class Diagram:**
 
 ![App Database SQL Table](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+  
+
+## Command Reference
+
+#### Ping
+
+```bash
+  /ping
+```
+
+#### Show Events
+
+```bash
+  /show-event [filter]
+```
+
+| Parameter | Type     | Description                                                  |
+| :-------- | :------- | :----------------------------------------------------------- |
+| `filter`  | `string` | **Optional**. Values: upcoming (default), ongoing, past, all |
+
+
+
+
+*More commands to be added soon.*
 
   
