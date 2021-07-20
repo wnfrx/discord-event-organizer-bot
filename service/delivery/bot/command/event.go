@@ -17,7 +17,23 @@ func (h *botCommandHandler) commandHandlerPing(s *discordgo.Session, i *discordg
 	})
 }
 
-func (h *botCommandHandler) commandHandlerShowEvents(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (h *botCommandHandler) commandHandlerEvent(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	switch i.ApplicationCommandData().Options[0].Name {
+	default:
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Oops, something gone wrong.\n" +
+					"Hol' up, you aren't supposed to see this message.",
+			},
+		})
+
+	case CommandEventGetList:
+		h.subcommandHandlerShowEvents(s, i)
+	}
+}
+
+func (h *botCommandHandler) subcommandHandlerShowEvents(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
