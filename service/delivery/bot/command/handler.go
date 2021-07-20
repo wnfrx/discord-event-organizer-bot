@@ -16,17 +16,17 @@ type botCommandHandler struct {
 func NewBotCommandHandler(
 	session *discordgo.Session,
 	euc service.EventUsecase,
-) botCommandHandler {
-	return botCommandHandler{
+) *botCommandHandler {
+	return &botCommandHandler{
 		session: session,
 		euc:     euc,
 	}
 }
 
-func (h botCommandHandler) RegisterBotCommandHandlers() (err error) {
+func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 	var iCommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		CommandPing:      h.commandHandlerPing,
-		CommandShowEvent: h.commandHandlerShowEvents,
+		CommandPing:  h.commandHandlerPing,
+		CommandEvent: h.commandHandlerEvent,
 	}
 
 	// NOTE: Interaction Command Handler

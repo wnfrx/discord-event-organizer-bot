@@ -8,12 +8,15 @@ This bot is made to organizing any events (offline, online, and etc.) and remind
 
 ## Features
 
-- Show All Events (Ongoing, Upcoming, Past)
-- Create Event
-- Join Event
-- Cancel Event
-- Add Participant to an Event
-- Event Schedule Reminder
+- Event
+  - Show Event List (Ongoing, Upcoming, Past)
+  - Create Event
+  - Join Event
+  - Cancel Event
+  - Add Participant
+  - Schedule Reminder
+
+*More Awesome Feature on the way*
 
   
 ## Run Locally
@@ -64,10 +67,10 @@ For database, this project is using PostgreSQL as main database repository (you 
   /ping
 ```
 
-#### Show Events
+#### Events
 
 ```bash
-  /show-event [filter]
+  /event list [filter]
 ```
 
 | Parameter | Type     | Description                                                  |
