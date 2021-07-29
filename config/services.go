@@ -14,6 +14,13 @@ func (c *Config) InitServices() (err error) {
 	er := faker.NewEventRepository()
 	euc := usecase.NewEventUsecase(er)
 
+	cjh := cron.NewJobHandler(c.session)
+
+	if err := cjh.InitJobHandlers(); err != nil {
+		log.Printf("[config][services] Failed while register cron job handlers, %+v", err)
+		return err
+	}
+
 	bch := command.NewBotCommandHandler(
 		c.session,
 		euc,
@@ -21,13 +28,6 @@ func (c *Config) InitServices() (err error) {
 
 	if err := bch.RegisterBotCommandHandlers(); err != nil {
 		log.Printf("[config][services] Failed while register bot command handlers, %+v", err)
-		return err
-	}
-
-	cjh := cron.NewJobHandler(c.session)
-
-	if err := cjh.InitJobHandlers(); err != nil {
-		log.Printf("[config][services] Failed while register cron job handlers, %+v", err)
 		return err
 	}
 
