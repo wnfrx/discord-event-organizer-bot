@@ -21,7 +21,9 @@ func (h *cronJobHandler) testJob() {
 		return
 	}
 
-	h.session.ChannelMessageSend(guild.SystemChannelID, "Hi, Me triggered every minutes")
+	fmt.Println(guild)
+
+	// h.session.ChannelMessageSend(guild.SystemChannelID, "Hi, Me triggered every minutes")
 }
 
 func (h *cronJobHandler) testFiveMinuteJob() {
