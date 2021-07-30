@@ -4,11 +4,13 @@ import (
 	"errors"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/jmoiron/sqlx"
 )
 
 type Config struct {
 	session  *discordgo.Session
 	commands []*discordgo.ApplicationCommand
+	db       *sqlx.DB
 }
 
 func NewConfig() *Config {

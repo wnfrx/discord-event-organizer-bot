@@ -34,6 +34,7 @@ func catch(err error) {
 func main() {
 	app := config.NewConfig()
 	catch(app.InitDiscordSession())
+	catch(app.InitPostgres())
 	catch(app.InitServices())
 	catch(app.Run())
 
