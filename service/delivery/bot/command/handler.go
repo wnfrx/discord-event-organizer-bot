@@ -1,6 +1,7 @@
 package command
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -10,19 +11,23 @@ import (
 )
 
 type botCommandHandler struct {
+	guilds map[string]*discordgo.Guild
+
 	session *discordgo.Session
 	euc     service.EventUsecase
-	guilds  map[string]*discordgo.Guild
+	guc     service.GuildUsecase
 }
 
 func NewBotCommandHandler(
 	session *discordgo.Session,
 	euc service.EventUsecase,
+	guc service.GuildUsecase,
 ) *botCommandHandler {
 	return &botCommandHandler{
+		guilds:  map[string]*discordgo.Guild{},
 		session: session,
 		euc:     euc,
-		guilds:  map[string]*discordgo.Guild{},
+		guc:     guc,
 	}
 }
 
@@ -44,6 +49,12 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 		for _, g := range r.Guilds {
 			h.guilds[g.ID] = g
 
+			err := h.guc.RegisterGuild(context.Background(), g.ID)
+			if err != nil {
+				log.Printf("[service][delivery][bot][command] Failed to RegisterGuild, %+v\n", err)
+				return
+			}
+
 			for _, v := range commands {
 				cmd, err := h.session.ApplicationCommandCreate(os.Getenv("BOT_APPLICATION_ID"), g.ID, v)
 				if err != nil {
@@ -59,6 +70,14 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 	// NOTE: Handler on Bot joined a Guild
 	h.session.AddHandler(func(s *discordgo.Session, g *discordgo.GuildCreate) {
 		if _, ok := h.guilds[g.ID]; ok {
+			return
+		}
+
+		h.guilds[g.ID] = g.Guild
+
+		err := h.guc.RegisterGuild(context.Background(), g.ID)
+		if err != nil {
+			log.Printf("[service][delivery][bot][command] Failed to RegisterGuild, %+v\n", err)
 			return
 		}
 
@@ -80,6 +99,12 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 	// NOTE: Handler on Bot kicked from a Guild
 	h.session.AddHandler(func(s *discordgo.Session, g *discordgo.GuildDelete) {
 		if _, ok := h.guilds[g.ID]; !ok {
+			return
+		}
+
+		err := h.guc.RemoveGuild(context.Background(), g.ID)
+		if err != nil {
+			log.Printf("[service][delivery][bot][command] Failed to RemoveGuild, %+v\n", err)
 			return
 		}
 
