@@ -20,7 +20,7 @@ func init() {
 	flag.Parse()
 
 	err := godotenv.Load()
-	if err != nil {
+	if os.Getenv("APP_ENV") == "local" && err != nil {
 		log.Fatal("Error loading .env file")
 	}
 }
