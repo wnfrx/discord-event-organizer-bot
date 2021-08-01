@@ -1,4 +1,4 @@
-BEGIN;
+CREATE SCHEMA IF NOT EXISTS guild;
 
 CREATE TABLE IF NOT EXISTS guild.guilds
 (
@@ -14,5 +14,3 @@ CREATE TABLE IF NOT EXISTS guild.guilds
 );
 
 CREATE INDEX IF NOT EXISTS guild_guilds_guild_id_idx ON guild.guilds(guild_id);
-
-COMMIT;
