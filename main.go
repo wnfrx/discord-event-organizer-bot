@@ -35,6 +35,7 @@ func main() {
 	app := config.NewConfig()
 	catch(app.InitDiscordSession())
 	catch(app.InitPostgres())
+	catch(app.InitMigration())
 	catch(app.InitRouter())
 	catch(app.InitServices())
 	catch(app.Run())
