@@ -21,7 +21,7 @@ func (c *Config) InitMigration() (err error) {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///db/migrations",
+		"file://db/migrations",
 		"postgres",
 		driver,
 	)
@@ -30,7 +30,8 @@ func (c *Config) InitMigration() (err error) {
 		return err
 	}
 
-	if err = m.Up(); err != nil {
+	err = m.Run()
+	if err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Failed to do migration: %v", err)
 		return err
 	}

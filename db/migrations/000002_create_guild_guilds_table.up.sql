@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS guild.guilds
     deleted_by VARCHAR(100) DEFAULT NULL
 );
 
-CREATE INDEX guild_guilds_guild_id_idx ON guild.guilds(guild_id);
+CREATE INDEX IF NOT EXISTS guild_guilds_guild_id_idx ON guild.guilds(guild_id);
 
 COMMIT;
