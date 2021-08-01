@@ -1,33 +1,52 @@
 package config
 
 import (
-	"errors"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func (c *Config) InitMigration() (err error) {
-	if c.db == nil {
-		return errors.New("database connection is not initialized yet")
-	}
+	// if c.db == nil {
+	// 	return errors.New("database connection is not initialized yet")
+	// }
 
-	driver, err := postgres.WithInstance(c.db.DB, &postgres.Config{})
-	if err != nil {
-		log.Fatalf("Failed to init migration postgres instance: %v", err)
-		return err
-	}
+	// driver, err := postgres.WithInstance(c.db.DB, &postgres.Config{})
+	// if err != nil {
+	// 	log.Fatalf("Failed to init migration postgres instance: %v", err)
+	// 	return err
+	// }
 
-	m, err := migrate.NewWithDatabaseInstance(
+	// m, err := migrate.NewWithDatabaseInstance(
+	// 	"file://db/migrations",
+	// 	"postgres",
+	// 	driver,
+	// )
+	// if err != nil {
+	// 	log.Fatalf("Failed to init migration with database instance: %v", err)
+	// 	return err
+	// }
+
+	connString := "postgres://%s:%s@%s:%s/%s?sslmode=%s"
+	connString = fmt.Sprintf(
+		connString,
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_SSL_MODE"),
+	)
+
+	m, err := migrate.New(
 		"file://db/migrations",
-		"postgres",
-		driver,
+		connString,
 	)
 	if err != nil {
-		log.Fatalf("Failed to init migration with database instance: %v", err)
-		return err
+		log.Fatalf("Failed to init migration: %v", err)
 	}
 
 	err = m.Run()
