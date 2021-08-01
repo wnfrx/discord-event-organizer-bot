@@ -50,7 +50,12 @@ func (c *Config) InitMigration() (err error) {
 		log.Fatalf("Failed to init migration: %v", err)
 	}
 
-	err = m.Run()
+	if err = m.Force(1); err != nil {
+		log.Fatalf("Failed to force migration version: %v", err)
+		return err
+	}
+
+	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Failed to do migration: %v", err)
 		return err
