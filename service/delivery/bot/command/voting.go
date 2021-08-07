@@ -36,8 +36,10 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 	log.Println("create initial vote")
 
 	var (
-		yEmoji = "👍"
-		nEmoji = "👎"
+		yEmoji      = "👍"
+		nEmoji      = "👎"
+		cancelEmoji = "🚫"
+		isCanceled  bool
 	)
 
 	vote := models.Voting{
@@ -90,6 +92,10 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 		log.Println(err)
 		return
 	}
+	if err = s.MessageReactionAdd(i.ChannelID, interactionMsg.ID, cancelEmoji); err != nil {
+		log.Println(err)
+		return
+	}
 
 	// Voting process
 	ticker := time.NewTicker(time.Duration(duration) * time.Second)
@@ -108,6 +114,11 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 				return
 
 			default:
+				cancelUsers, err := s.MessageReactions(i.ChannelID, interactionMsg.ID, cancelEmoji, 100, "", "")
+				if err != nil {
+					continue
+				}
+
 				yUsers, err := s.MessageReactions(i.ChannelID, interactionMsg.ID, yEmoji, 100, "", "")
 				if err != nil {
 					continue
@@ -119,11 +130,11 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 				}
 
 				yOption := models.VotingOption{
-					Name: ":+1",
+					Name: yEmoji,
 				}
 
 				nOption := models.VotingOption{
-					Name: ":-1",
+					Name: nEmoji,
 				}
 
 				for _, u := range yUsers {
@@ -136,6 +147,30 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 
 				vote.Options = []models.VotingOption{yOption, nOption}
 				h.votingGuildMap[i.GuildID] = vote
+
+				if len(cancelUsers) > 1 {
+					log.Println("voting canceled")
+					isCanceled = true
+
+					err = s.FollowupMessageEdit(s.State.User.ID, i.Interaction, interactionMsg.ID, &discordgo.WebhookEdit{
+						Content: "Voting batal gan",
+						Embeds: []*discordgo.MessageEmbed{
+							{
+								Title: description,
+								Description: fmt.Sprintf(
+									`
+									Yep: %d
+									Nop: %d
+								`,
+									yOption.CountVote(),
+									nOption.CountVote(),
+								),
+							},
+						},
+					})
+
+					return
+				}
 
 				err = s.FollowupMessageEdit(s.State.User.ID, i.Interaction, interactionMsg.ID, &discordgo.WebhookEdit{
 					Embeds: []*discordgo.MessageEmbed{
@@ -157,6 +192,10 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 	}()
 
 	wg.Wait()
+
+	if isCanceled {
+		return
+	}
 
 	// decision
 	var (

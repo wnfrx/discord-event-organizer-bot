@@ -99,7 +99,7 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 			log.Printf("Command %s successfully registered on Guild [%s], ID:%s\n", cmd.Name, g.ID, cmd.ID)
 		}
 
-		s.ChannelMessageSend(g.SystemChannelID, "Hello World!")
+		// s.ChannelMessageSend(g.SystemChannelID, "Hello World!")
 	})
 
 	// NOTE: Handler on Bot kicked from a Guild
