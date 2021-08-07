@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/wnfrx/discord-event-organizer-bot/models"
 	"github.com/wnfrx/discord-event-organizer-bot/service"
 )
 
@@ -16,6 +17,9 @@ type botCommandHandler struct {
 	session *discordgo.Session
 	euc     service.EventUsecase
 	guc     service.GuildUsecase
+
+	// Vote
+	votingGuildMap map[string]models.Voting
 }
 
 func NewBotCommandHandler(
@@ -24,10 +28,11 @@ func NewBotCommandHandler(
 	guc service.GuildUsecase,
 ) *botCommandHandler {
 	return &botCommandHandler{
-		guilds:  map[string]*discordgo.Guild{},
-		session: session,
-		euc:     euc,
-		guc:     guc,
+		guilds:         map[string]*discordgo.Guild{},
+		session:        session,
+		euc:            euc,
+		guc:            guc,
+		votingGuildMap: make(map[string]models.Voting),
 	}
 }
 
@@ -35,6 +40,7 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 	var iCommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		CommandPing:  h.commandHandlerPing,
 		CommandEvent: h.commandHandlerEvent,
+		CommandVote:  h.commandHandlerVoting,
 	}
 
 	// NOTE: Interaction Command Handler
