@@ -15,6 +15,7 @@ const (
 	// Voting Region
 	CommandVote       = "vote"
 	CommandVoteCreate = "create"
+	CommandVoteCancel = "cancel"
 )
 
 var (

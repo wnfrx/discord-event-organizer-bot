@@ -19,7 +19,8 @@ type botCommandHandler struct {
 	guc     service.GuildUsecase
 
 	// Vote
-	votingGuildMap map[string]models.Voting
+	votingGuildMap  map[string]models.Voting
+	votingCancelMap map[string]*chan int
 }
 
 func NewBotCommandHandler(
@@ -28,11 +29,12 @@ func NewBotCommandHandler(
 	guc service.GuildUsecase,
 ) *botCommandHandler {
 	return &botCommandHandler{
-		guilds:         map[string]*discordgo.Guild{},
-		session:        session,
-		euc:            euc,
-		guc:            guc,
-		votingGuildMap: make(map[string]models.Voting),
+		guilds:          map[string]*discordgo.Guild{},
+		session:         session,
+		euc:             euc,
+		guc:             guc,
+		votingGuildMap:  make(map[string]models.Voting),
+		votingCancelMap: make(map[string]*chan int),
 	}
 }
 
@@ -99,7 +101,7 @@ func (h *botCommandHandler) RegisterBotCommandHandlers() (err error) {
 			log.Printf("Command %s successfully registered on Guild [%s], ID:%s\n", cmd.Name, g.ID, cmd.ID)
 		}
 
-		s.ChannelMessageSend(g.SystemChannelID, "Hello World!")
+		// s.ChannelMessageSend(g.SystemChannelID, "Hello World!")
 	})
 
 	// NOTE: Handler on Bot kicked from a Guild
