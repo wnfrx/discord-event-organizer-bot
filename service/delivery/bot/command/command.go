@@ -11,6 +11,10 @@ const (
 	CommandEventCreate  = "create"
 	CommandEventJoin    = "join"
 	CommandEventCancel  = "cancel"
+
+	// Voting Region
+	CommandVote       = "vote"
+	CommandVoteCreate = "create"
 )
 
 var (
@@ -33,6 +37,31 @@ var (
 							Name:        "filter",
 							Description: "List Filter: upcoming, ongoing, past, all",
 							Required:    false,
+						},
+					},
+				},
+			},
+		},
+		{
+			Name:        CommandVote,
+			Description: "Vote commands",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Name:        CommandVoteCreate,
+					Description: "Buat voting gan",
+					Type:        discordgo.ApplicationCommandOptionSubCommand,
+					Options: []*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionString,
+							Name:        "description",
+							Description: "Mau voting tentang apa gan?",
+							Required:    true,
+						},
+						{
+							Type:        discordgo.ApplicationCommandOptionInteger,
+							Name:        "duration",
+							Description: "Berapa detik?",
+							Required:    true,
 						},
 					},
 				},
