@@ -19,8 +19,7 @@ type botCommandHandler struct {
 	guc     service.GuildUsecase
 
 	// Vote
-	votingGuildMap  map[string]models.Voting
-	votingCancelMap map[string]*chan int
+	votingGuildMap map[string]models.Voting
 }
 
 func NewBotCommandHandler(
@@ -29,12 +28,11 @@ func NewBotCommandHandler(
 	guc service.GuildUsecase,
 ) *botCommandHandler {
 	return &botCommandHandler{
-		guilds:          map[string]*discordgo.Guild{},
-		session:         session,
-		euc:             euc,
-		guc:             guc,
-		votingGuildMap:  make(map[string]models.Voting),
-		votingCancelMap: make(map[string]*chan int),
+		guilds:         map[string]*discordgo.Guild{},
+		session:        session,
+		euc:            euc,
+		guc:            guc,
+		votingGuildMap: make(map[string]models.Voting),
 	}
 }
 

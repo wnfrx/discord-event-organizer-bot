@@ -40,7 +40,6 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 		nEmoji      = "👎"
 		cancelEmoji = "🚫"
 		isCanceled  bool
-		cancel      chan int
 	)
 
 	vote := models.Voting{
@@ -57,14 +56,10 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 		},
 	}
 
-	cancel = make(chan int, 1)
-
 	h.votingGuildMap[i.GuildID] = vote
-	h.votingCancelMap[i.GuildID] = &cancel
 
 	defer func() {
 		delete(h.votingGuildMap, i.GuildID)
-		delete(h.votingCancelMap, i.GuildID)
 	}()
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -116,12 +111,6 @@ func (h *botCommandHandler) subcommandHandlerVotingCreate(s *discordgo.Session, 
 			select {
 			case <-ticker.C:
 				// voting finished
-				return
-
-			case <-cancel:
-				// voting cancel
-				isCanceled = true
-				log.Println("voting canceled")
 				return
 
 			default:
